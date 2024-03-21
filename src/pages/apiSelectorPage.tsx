@@ -1,0 +1,16 @@
+import Box from "@mui/material/Box";
+import PaperBox from "../components/paperBox.tsx";
+import Typography from "@mui/material/Typography";
+import ApiSelectorForm from "../components/forms/apiSelectorForm.tsx";
+
+export default function ApiSelectorPage() {
+
+    return (
+        <Box>
+            <PaperBox>
+                <Typography component="h1" variant="h5">Sign In to TRACARDI Server</Typography>
+                <ApiSelectorForm/>
+            </PaperBox>
+        </Box>
+    )
+}

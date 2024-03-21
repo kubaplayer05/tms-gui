@@ -1,18 +1,20 @@
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import {useState} from "react";
 import {QueryClient, QueryClientProvider} from "react-query";
-import {CssBaseline} from "@mui/material";
+import {CssBaseline, ThemeProvider} from "@mui/material";
 import MainLayout from "./layout/mainLayout.tsx";
+import ApiSelectorPage from "./pages/apiSelectorPage.tsx";
+import {theme} from "./lib/theme.ts";
 
 export default function App() {
 
     const queryClient = new QueryClient()
-    const [isApiUrlSelected, setIsApiUrlSelected] = useState(true)
+    const [isApiUrlSelected, setIsApiUrlSelected] = useState(false)
 
     const router = createBrowserRouter([
         {
             path: "/",
-            element: isApiUrlSelected ? <MainLayout/> : <div>Form to Sign in</div>,
+            element: isApiUrlSelected ? <MainLayout/> : <ApiSelectorPage/>,
             children: [
                 {
                     path: "/",
@@ -24,8 +26,10 @@ export default function App() {
 
     return (
         <QueryClientProvider client={queryClient}>
-            <CssBaseline/>
-            <RouterProvider router={router}/>
+            <ThemeProvider theme={theme}>
+                <CssBaseline/>
+                <RouterProvider router={router}/>
+            </ThemeProvider>
         </QueryClientProvider>
 
     )
