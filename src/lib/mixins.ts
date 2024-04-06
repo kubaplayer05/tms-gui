@@ -1,4 +1,5 @@
-import {CSSObject, Theme} from "@mui/material/styles";
+import {CSSObject} from "@mui/material/styles";
+import {Theme} from "../types/theme"
 
 export const openedMixin = (theme: Theme, width: number): CSSObject => ({
     width: width,

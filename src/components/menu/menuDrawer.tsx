@@ -12,6 +12,7 @@ import {useTheme} from "@mui/material/styles";
 import {closedMixin, openedMixin} from "../../lib/mixins.ts";
 import useApiAuthContext from "../../hooks/useApiAuthContext.ts";
 import {Link} from "react-router-dom";
+import {Theme} from "../../types/theme";
 
 interface MainDrawerProps {
     open: boolean,
@@ -22,7 +23,7 @@ interface MainDrawerProps {
 export default function MenuDrawer({open, handleDrawerClose, drawerWidth}: MainDrawerProps) {
 
     const {removeAccess} = useApiAuthContext()
-    const theme = useTheme()
+    const theme: Theme = useTheme()
     const navOptions = [{name: "dashboard", icon: <MdAreaChart/>, route: "/"}, {
         name: "tenants",
         icon: <MdPeople/>,
