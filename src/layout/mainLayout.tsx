@@ -1,8 +1,8 @@
 import Box from '@mui/material/Box';
 import {Outlet} from "react-router-dom";
 import {useState} from "react";
-import MainDrawer from "../components/mainDrawer.tsx";
-import MainAppBar from "../components/mainAppBar.tsx";
+import MenuDrawer from "../components/menu/menuDrawer.tsx";
+import MenuAppBar from "../components/menu/menuAppBar.tsx";
 
 export default function MainLayout() {
 
@@ -20,9 +20,9 @@ export default function MainLayout() {
 
     return (
         <Box sx={{display: 'flex'}}>
-            <MainAppBar open={open} handleDrawerOpen={handleDrawerOpen} drawerWidth={drawerWidth}/>
-            <MainDrawer open={open} handleDrawerClose={handleDrawerClose} drawerWidth={drawerWidth}/>
-            <Box component="main" sx={{flexGrow: 1, p: 3}}>
+            <MenuAppBar open={open} handleDrawerOpen={handleDrawerOpen} drawerWidth={drawerWidth}/>
+            <MenuDrawer open={open} handleDrawerClose={handleDrawerClose} drawerWidth={drawerWidth}/>
+            <Box component="main" sx={{flexGrow: 1, p: 3, marginTop: "100px"}}>
                 <Outlet/>
             </Box>
         </Box>

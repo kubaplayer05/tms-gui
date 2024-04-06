@@ -8,7 +8,7 @@ export default function ApiSelectorPage() {
     return (
         <Box>
             <PaperBox>
-                <Typography component="h1" variant="h5">Sign In to TRACARDI Server</Typography>
+                <Typography component="h1" variant="h5">Sign In to TMS</Typography>
                 <ApiSelectorForm/>
             </PaperBox>
         </Box>

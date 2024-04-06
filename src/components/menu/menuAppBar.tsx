@@ -4,6 +4,7 @@ import IconButton from "@mui/material/IconButton";
 import {MdMenu} from "react-icons/md";
 import Typography from "@mui/material/Typography";
 import {useTheme} from "@mui/material/styles";
+import ThemeSwitch from "../themeSwitch.tsx";
 
 interface MainAppBarProps {
     open: boolean,
@@ -11,7 +12,7 @@ interface MainAppBarProps {
     drawerWidth: number
 }
 
-export default function MainAppBar({open, handleDrawerOpen, drawerWidth}: MainAppBarProps) {
+export default function MenuAppBar({open, handleDrawerOpen, drawerWidth}: MainAppBarProps) {
 
     const theme = useTheme()
 
@@ -42,6 +43,7 @@ export default function MainAppBar({open, handleDrawerOpen, drawerWidth}: MainAp
                 <Typography variant="h6" noWrap component="div">
                     Tenant
                 </Typography>
+                <ThemeSwitch/>
             </Toolbar>
         </AppBar>
     )

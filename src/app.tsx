@@ -1,24 +1,31 @@
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
-import {useState} from "react";
 import {QueryClient, QueryClientProvider} from "react-query";
 import {CssBaseline, ThemeProvider} from "@mui/material";
 import MainLayout from "./layout/mainLayout.tsx";
 import ApiSelectorPage from "./pages/apiSelectorPage.tsx";
-import {theme} from "./lib/theme.ts";
+import {darkTheme, lightTheme} from "./lib/theme.ts";
+import useApiAuthContext from "./hooks/useApiAuthContext.ts";
+import useThemeModeContext from "./hooks/useThemeModeContext.ts";
+import TenantsPage from "./pages/tenantsPage.tsx";
 
 export default function App() {
 
     const queryClient = new QueryClient()
-    const [isApiUrlSelected, setIsApiUrlSelected] = useState(false)
+    const ctx = useApiAuthContext()
+    const {themeMode} = useThemeModeContext()
 
     const router = createBrowserRouter([
         {
             path: "/",
-            element: isApiUrlSelected ? <MainLayout/> : <ApiSelectorPage/>,
+            element: ctx.accessToken ? <MainLayout/> : <ApiSelectorPage/>,
             children: [
                 {
                     path: "/",
                     element: <div>Home Page</div>
+                },
+                {
+                    path: "/tenants",
+                    element: <TenantsPage/>
                 }
             ]
         }
@@ -26,7 +33,7 @@ export default function App() {
 
     return (
         <QueryClientProvider client={queryClient}>
-            <ThemeProvider theme={theme}>
+            <ThemeProvider theme={themeMode === "light" ? lightTheme : darkTheme}>
                 <CssBaseline/>
                 <RouterProvider router={router}/>
             </ThemeProvider>
