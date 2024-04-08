@@ -1,12 +1,12 @@
-import axios from "axios";
-import {AuthResponse} from "../../types/api";
+import axios, {AxiosResponse} from "axios";
+import {AuthResponse, ValidationError} from "../../types/api";
 
 interface GetTokenParams {
     prefixUrl: string,
     apiKey: string
 }
 
-export function getToken({prefixUrl, apiKey}: GetTokenParams) {
+export function getToken({prefixUrl, apiKey}: GetTokenParams): Promise<AxiosResponse<AuthResponse, ValidationError>> {
 
     const config = {
         method: 'get',
@@ -15,5 +15,5 @@ export function getToken({prefixUrl, apiKey}: GetTokenParams) {
         headers: {}
     }
 
-    return axios.request<AuthResponse>(config)
+    return axios.request(config)
 }

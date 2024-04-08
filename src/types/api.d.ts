@@ -4,7 +4,8 @@ export interface Tenant {
     name: string,
     install_token: string,
     email: string,
-    expire: string
+    expire: string,
+    customer_id: string
 }
 
 export interface GetTenantsError {

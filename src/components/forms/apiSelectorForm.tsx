@@ -33,9 +33,9 @@ export default function ApiSelectorForm() {
 
     return (
         <form onSubmit={submitHandler} style={{width: "100%"}}>
-            <Grid container display="flex" justifyContent="center">
+            <Grid container sx={{display: "flex", justifyContent: "center"}}>
                 <Grid item xs={8}
-                      style={{display: "flex", justifyContent: "right", flexDirection: "column", gap: "1.4rem"}}>
+                      sx={{display: "flex", justifyContent: "flex-end", flexDirection: "column", gap: "1.4rem"}}>
                     <AutoCompleteInput label="API ENDPOINT URL" value={url} onChange={(e) => {
                         setUrl(e.target.value)
                     }}/>
@@ -44,10 +44,9 @@ export default function ApiSelectorForm() {
                     }} label="API KEY"/>
                     <Button type="submit" variant="contained" disabled={disabled}>
                         {mutation.isLoading ? <CircularProgress size={24}/> :
-                            <Typography component="p" fontSize={16}>Sign in</Typography>}
+                            <Typography component="p" sx={{fontSize: 16}}>Sign in</Typography>}
                     </Button>
-                    {mutation.isError ?
-                        <Typography color="error" component="p"><MdError/> {mutation.error.message}</Typography> : null}
+                    {mutation.isError && <Typography color="error" component="p"><MdError/></Typography>}
                 </Grid>
             </Grid>
         </form>

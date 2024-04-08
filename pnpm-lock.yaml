@@ -20,6 +20,48 @@ dependencies:
   '@mui/system':
     specifier: ^5.15.15
     version: 5.15.15(@emotion/react@11.11.4)(@emotion/styled@11.11.0)(@types/react@18.2.67)(react@18.2.0)
+  '@mui/utils':
+    specifier: ^5.15.14
+    version: 5.15.14(@types/react@18.2.67)(react@18.2.0)
+  '@types/uniqid':
+    specifier: ^5.3.4
+    version: 5.3.4
+  Checkbox,:
+    specifier: link:@mui/material/Checkbox,
+    version: link:@mui/material/Checkbox,
+  Delete,:
+    specifier: link:@mui/icons-material/Delete,
+    version: link:@mui/icons-material/Delete,
+  FilterList,:
+    specifier: link:@mui/icons-material/FilterList,
+    version: link:@mui/icons-material/FilterList,
+  Table,:
+    specifier: link:@mui/material/Table,
+    version: link:@mui/material/Table,
+  TableBody,:
+    specifier: link:@mui/material/TableBody,
+    version: link:@mui/material/TableBody,
+  TableCell,:
+    specifier: link:@mui/material/TableCell,
+    version: link:@mui/material/TableCell,
+  TableContainer,:
+    specifier: link:@mui/material/TableContainer,
+    version: link:@mui/material/TableContainer,
+  TableHead,:
+    specifier: link:@mui/material/TableHead,
+    version: link:@mui/material/TableHead,
+  TablePagination,:
+    specifier: link:@mui/material/TablePagination,
+    version: link:@mui/material/TablePagination,
+  TableRow,:
+    specifier: link:@mui/material/TableRow,
+    version: link:@mui/material/TableRow,
+  TableSortLabel,:
+    specifier: link:@mui/material/TableSortLabel,
+    version: link:@mui/material/TableSortLabel,
+  Tooltip,:
+    specifier: link:@mui/material/Tooltip,
+    version: link:@mui/material/Tooltip,
   axios:
     specifier: ^1.6.8
     version: 1.6.8
@@ -38,6 +80,9 @@ dependencies:
   react-router-dom:
     specifier: ^6.22.3
     version: 6.22.3(react-dom@18.2.0)(react@18.2.0)
+  uniqid:
+    specifier: ^5.4.0
+    version: 5.4.0
 
 devDependencies:
   '@types/react':
@@ -1123,6 +1168,10 @@ packages:
   /@types/semver@7.5.8:
     resolution: {integrity: sha512-I8EUhyrgfLrcTkzV3TSsGyl1tSuPrEDzr0yd5m90UgNxQkyDXULk3b6MlQqTCpZpNtWe1K0hzclnZkTcLBe2UQ==}
     dev: true
+
+  /@types/uniqid@5.3.4:
+    resolution: {integrity: sha512-AgC+o3/8/QEHuU3w5w2jZ8auQtjSJ/s8G8RfEk9CYLogK1RGXqxhHH0wOEAu8uHXjvj8oh/dRtfgok4IHKxh/Q==}
+    dev: false
 
   /@typescript-eslint/eslint-plugin@7.3.1(@typescript-eslint/parser@7.3.1)(eslint@8.57.0)(typescript@5.4.2):
     resolution: {integrity: sha512-STEDMVQGww5lhCuNXVSQfbfuNII5E08QWkvAw5Qwf+bj2WT+JkG1uc+5/vXA3AOYMDHVOSpL+9rcbEUiHIm2dw==}
@@ -2502,6 +2551,10 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
     dev: true
+
+  /uniqid@5.4.0:
+    resolution: {integrity: sha512-38JRbJ4Fj94VmnC7G/J/5n5SC7Ab46OM5iNtSstB/ko3l1b5g7ALt4qzHFgGciFkyiRNtDXtLNb+VsxtMSE77A==}
+    dev: false
 
   /unload@2.2.0:
     resolution: {integrity: sha512-B60uB5TNBLtN6/LsgAf3udH9saB5p7gqJwcFfbOEZ8BcBHnGwCf6G/TGiEqkRAxX7zAFIUtzdrXQSdL3Q/wqNA==}
