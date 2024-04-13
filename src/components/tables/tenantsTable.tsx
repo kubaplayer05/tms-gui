@@ -142,6 +142,9 @@ export default function TenantsTable({tenants}: TenantsTableProps) {
                                 const isItemSelected = isSelected(tenant.id);
                                 const labelId = `enhanced-table-checkbox-${index}`;
 
+                                const formattedExpiredDate = new Date(tenant.expire).toLocaleString()
+                                const formattedCreateDate = new Date(tenant.created).toLocaleString()
+
                                 return (
                                     <TableRow
                                         hover
@@ -172,8 +175,8 @@ export default function TenantsTable({tenants}: TenantsTableProps) {
                                         </TableCell>
                                         <TableCell align="left">{tenant.name}</TableCell>
                                         <TableCell align="left">{tenant.email}</TableCell>
-                                        <TableCell align="left">{tenant.created}</TableCell>
-                                        <TableCell align="left">{tenant.expire}</TableCell>
+                                        <TableCell align="left">{formattedCreateDate}</TableCell>
+                                        <TableCell align="left">{formattedExpiredDate}</TableCell>
                                         <TableCell align="left">{tenant.customer_id ? tenant.customer_id : "NO DATA"}</TableCell>
                                         <TableCell align="left">{tenant.install_token}</TableCell>
                                     </TableRow>
