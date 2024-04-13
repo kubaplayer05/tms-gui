@@ -12,6 +12,10 @@ import {ChangeEvent, useState} from "react";
 import {Tenant} from "../../types/api";
 import TenantsTableHead from "./tenantsTableHead.tsx";
 import TenantsTableToolbar from "./tenantsTableToolbar.tsx";
+import {useMutation} from "react-query";
+import useApiAuthContext from "../../hooks/useApiAuthContext.ts";
+import {deleteTenant} from "../../lib/api/deleteTenant.ts";
+import {redirect, useNavigate} from "react-router-dom";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
     if (b[orderBy] < a[orderBy]) {
@@ -59,6 +63,16 @@ export default function TenantsTable({tenants}: TenantsTableProps) {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(20);
 
+    const {accessToken, apiPrefix} = useApiAuthContext()
+    const navigate = useNavigate()
+
+    const mutation = useMutation({
+        mutationFn: deleteTenant,
+        onSuccess: () => {
+            navigate("/tenants")
+        }
+    })
+
     const handleRequestSort = (_event: React.MouseEvent<unknown>, property: keyof Tenant,) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -104,6 +118,13 @@ export default function TenantsTable({tenants}: TenantsTableProps) {
 
     const isSelected = (id: string) => selected.indexOf(id) !== -1;
 
+    const deleteTenantsHandler = () => {
+        selected.forEach(tenantId => {
+            mutation.reset()
+            mutation.mutate({tenantId, accessToken, prefixUrl: apiPrefix})
+        })
+    }
+
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows =
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tenants.length) : 0;
@@ -122,7 +143,7 @@ export default function TenantsTable({tenants}: TenantsTableProps) {
     return (
         <Box sx={{width: '100%'}}>
             <Paper sx={{width: '100%', mb: 2}}>
-                <TenantsTableToolbar numSelected={selected.length}/>
+                <TenantsTableToolbar numSelected={selected.length} deleteTenantHandler={deleteTenantsHandler}/>
                 <TableContainer>
                     <Table
                         sx={{minWidth: 750}}
@@ -177,7 +198,8 @@ export default function TenantsTable({tenants}: TenantsTableProps) {
                                         <TableCell align="left">{tenant.email}</TableCell>
                                         <TableCell align="left">{formattedCreateDate}</TableCell>
                                         <TableCell align="left">{formattedExpiredDate}</TableCell>
-                                        <TableCell align="left">{tenant.customer_id ? tenant.customer_id : "NO DATA"}</TableCell>
+                                        <TableCell
+                                            align="left">{tenant.customer_id ? tenant.customer_id : "NO DATA"}</TableCell>
                                         <TableCell align="left">{tenant.install_token}</TableCell>
                                     </TableRow>
                                 );
