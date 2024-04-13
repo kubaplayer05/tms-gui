@@ -9,7 +9,6 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import {useTheme} from "@mui/material/styles";
-import {closedMixin, openedMixin} from "../../lib/mixins.ts";
 import {Link} from "react-router-dom";
 import {Theme} from "../../types/theme";
 import MenuLogout from "./menuLogout.tsx";
@@ -29,18 +28,39 @@ export default function MenuDrawer({open, handleDrawerClose, drawerWidth}: MainD
         route: "/tenants"
     }]
 
+    const openedDrawerSx = {
+        width: drawerWidth,
+        transition: theme.transitions.create('width', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+        }),
+        overflowX: 'hidden',
+    }
+
+    const closedDrawerSx = {
+        transition: theme.transitions.create('width', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+        }),
+        overflowX: 'hidden',
+        width: `calc(${theme.spacing(7)} + 1px)`,
+        [theme.breakpoints.up('sm')]: {
+            width: `calc(${theme.spacing(8)} + 1px)`,
+        },
+    }
+
     const drawerSX = {
         width: drawerWidth,
         flexShrink: 0,
         whiteSpace: 'nowrap',
         boxSizing: 'border-box',
         ...(open && {
-            ...openedMixin(theme, drawerWidth),
-            '& .MuiDrawer-paper': openedMixin(theme, drawerWidth),
+            ...openedDrawerSx,
+            '& .MuiDrawer-paper': openedDrawerSx
         }),
         ...(!open && {
-            ...closedMixin(theme),
-            '& .MuiDrawer-paper': closedMixin(theme),
+            ...closedDrawerSx,
+            '& .MuiDrawer-paper': closedDrawerSx
         }),
     }
 
