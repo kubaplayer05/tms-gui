@@ -10,7 +10,7 @@ export default function TenantsPage() {
 
     const {apiPrefix, accessToken} = useApiAuthContext()
 
-    const {data, status} = useQuery({
+    const {data: res, status} = useQuery({
         queryKey: ["tenants"], queryFn: () => {
             return getTenants({prefixUrl: apiPrefix, accessToken: accessToken})
         }
@@ -29,11 +29,9 @@ export default function TenantsPage() {
         </Box>)
     }
 
-    console.log(data)
-
     return (
         <Box sx={{m: 0, p: 2, width: "100%"}}>
-            <TenantsTable/>
+            {res?.data && <TenantsTable tenants={res.data}/>}
         </Box>
     )
 }
