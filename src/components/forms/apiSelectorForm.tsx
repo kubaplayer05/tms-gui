@@ -28,7 +28,10 @@ export default function ApiSelectorForm() {
     const submitHandler = (e: FormEvent) => {
         e.preventDefault()
         mutation.reset()
-        mutation.mutate({prefixUrl: url, apiKey: apiKey})
+
+        const prefixUrl = url.trim().endsWith("/") ? url.trim().slice(0, -1) : url.trim()
+
+        mutation.mutate({prefixUrl: prefixUrl, apiKey: apiKey})
     }
 
     return (
