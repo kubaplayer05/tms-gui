@@ -1,6 +1,13 @@
 import {createTheme} from "@mui/material";
 
 export const lightTheme = createTheme({
+    typography: {
+        "fontFamily": `"IBM Plex Sans", "Arial", sans-serif`,
+        "fontSize": 15,
+        "fontWeightLight": 300,
+        "fontWeightRegular": 400,
+        "fontWeightMedium": 500
+    },
     palette: {
         mode: "light",
         primary: {
@@ -28,10 +35,17 @@ export const lightTheme = createTheme({
             white: "white",
             black: "black"
         }
-    },
+    }
 })
 
 export const darkTheme = createTheme({
+    typography: {
+        "fontFamily": `"IBM Plex Sans", "Arial", sans-serif`,
+        "fontSize": 15,
+        "fontWeightLight": 300,
+        "fontWeightRegular": 400,
+        "fontWeightMedium": 500
+    },
     palette: {
         mode: "dark",
         primary: {
