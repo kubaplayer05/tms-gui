@@ -26,6 +26,10 @@ export default function App() {
                 {
                     path: "/tenants",
                     element: <TenantsPage/>
+                },
+                {
+                    path: "/licenses",
+                    element: <div>TO DO licenses</div>
                 }
             ]
         }

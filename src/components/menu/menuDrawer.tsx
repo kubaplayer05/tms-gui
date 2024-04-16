@@ -2,6 +2,7 @@ import {Drawer} from "@mui/material";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import {MdAreaChart, MdChevronLeft, MdChevronRight, MdPeople} from "react-icons/md";
+import { RiShieldKeyholeLine } from "react-icons/ri";
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -22,11 +23,23 @@ interface MainDrawerProps {
 export default function MenuDrawer({open, handleDrawerClose, drawerWidth}: MainDrawerProps) {
 
     const theme: Theme = useTheme()
-    const navOptions = [{name: "dashboard", icon: <MdAreaChart/>, route: "/"}, {
-        name: "tenants",
-        icon: <MdPeople/>,
-        route: "/tenants"
-    }]
+    const navOptions = [
+        {
+            name: "dashboard",
+            icon: <MdAreaChart/>,
+            route: "/"
+        },
+        {
+            name: "licenses",
+            icon: <RiShieldKeyholeLine/>,
+            route: "/licenses"
+        },
+        {
+            name: "tenants",
+            icon: <MdPeople/>,
+            route: "/tenants"
+        }
+    ]
 
     const openedDrawerSx = {
         width: drawerWidth,
