@@ -26,17 +26,17 @@ export default function MenuDrawer({open, handleDrawerClose, drawerWidth}: MainD
     const navOptions = [
         {
             name: "dashboard",
-            icon: <MdAreaChart/>,
+            icon: <MdAreaChart size={22}/>,
             route: "/"
         },
         {
             name: "licenses",
-            icon: <RiShieldKeyholeLine/>,
+            icon: <RiShieldKeyholeLine size={22}/>,
             route: "/licenses"
         },
         {
             name: "tenants",
-            icon: <MdPeople/>,
+            icon: <MdPeople size={22}/>,
             route: "/tenants"
         }
     ]

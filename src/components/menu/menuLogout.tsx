@@ -43,7 +43,7 @@ export default function MenuLogout({isDrawerOpen}: MenuLogoutProps) {
                         mr: isDrawerOpen ? 3 : 'auto',
                         justifyContent: 'center',
                     }}>
-                        <MdExitToApp/>
+                        <MdExitToApp size={22}/>
                     </ListItemIcon>
                     <ListItemText primary="logout"
                                   sx={{
