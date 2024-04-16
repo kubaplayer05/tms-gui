@@ -138,7 +138,7 @@ export default function TenantsTable() {
 
     return (
         <Box sx={{width: '100%'}}>
-            <Paper sx={{width: '100%', mb: 2}}>
+            <Paper sx={{width: '100%', mb: 2, p: 4}}>
                 <TenantsTableToolbar numSelected={selected.length}/>
                 <TableContainer>
                     <Table
@@ -218,6 +218,6 @@ export default function TenantsTable() {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Paper>
-        </Box>
+       </Box>
     );
 }

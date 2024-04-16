@@ -4,11 +4,10 @@ import Typography from "@mui/material/Typography";
 import ApiSelectorForm from "../components/forms/apiSelectorForm.tsx";
 
 export default function ApiSelectorPage() {
-
     return (
         <Box>
             <PaperBox>
-                <Typography component="h1" variant="h5">Sign In to TMS</Typography>
+                <Typography component="h1" variant="h5">Sign-In to TMS</Typography>
                 <ApiSelectorForm/>
             </PaperBox>
         </Box>

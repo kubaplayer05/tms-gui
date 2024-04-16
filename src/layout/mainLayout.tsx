@@ -22,7 +22,7 @@ export default function MainLayout() {
         <Box sx={{display: 'flex'}}>
             <MenuAppBar open={open} handleDrawerOpen={handleDrawerOpen} drawerWidth={drawerWidth}/>
             <MenuDrawer open={open} handleDrawerClose={handleDrawerClose} drawerWidth={drawerWidth}/>
-            <Box component="main" sx={{flexGrow: 1, p: 3, marginTop: "100px"}}>
+            <Box component="main" sx={{flexGrow: 1, p: 4, marginTop: "64px"}}>
                 <Outlet/>
             </Box>
         </Box>

@@ -31,9 +31,5 @@ export default function TenantsPage() {
 
     console.log(data)
 
-    return (
-        <Box sx={{m: 0, p: 2, width: "100%"}}>
-            <TenantsTable/>
-        </Box>
-    )
+    return <TenantsTable/>
 }
