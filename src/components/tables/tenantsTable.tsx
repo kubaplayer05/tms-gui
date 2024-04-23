@@ -15,7 +15,7 @@ import TenantsTableToolbar from "./tenantsTableToolbar.tsx";
 import {useMutation} from "react-query";
 import useApiAuthContext from "../../hooks/useApiAuthContext.ts";
 import {deleteTenant} from "../../lib/api/deleteTenant.ts";
-import {redirect, useNavigate} from "react-router-dom";
+import useTenantsContext from "../../hooks/useTenantsContext.ts";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
     if (b[orderBy] < a[orderBy]) {
@@ -30,8 +30,8 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
 export type Order = 'asc' | 'desc';
 
 function getComparator<Key extends keyof Tenant>(order: Order, orderBy: Key,): (
-    a: { [key in Key]: number | string },
-    b: { [key in Key]: number | string },
+    a: { [key in Key]: string },
+    b: { [key in Key]: string },
 ) => number {
     return order === 'desc'
         ? (a, b) => descendingComparator(a, b, orderBy)
@@ -51,11 +51,7 @@ function stableSort<T>(array: T[], comparator: (a: T, b: T) => number) {
     return stabilizedThis.map((el) => el[0]);
 }
 
-interface TenantsTableProps {
-    tenants: Tenant[]
-}
-
-export default function TenantsTable({tenants}: TenantsTableProps) {
+export default function TenantsTable() {
 
     const [order, setOrder] = useState<Order>('asc');
     const [orderBy, setOrderBy] = useState<keyof Tenant>('created');
@@ -64,12 +60,12 @@ export default function TenantsTable({tenants}: TenantsTableProps) {
     const [rowsPerPage, setRowsPerPage] = useState(20);
 
     const {accessToken, apiPrefix} = useApiAuthContext()
-    const navigate = useNavigate()
+    const {tenants, deleteTenants} = useTenantsContext()
 
     const mutation = useMutation({
         mutationFn: deleteTenant,
-        onSuccess: () => {
-            navigate("/tenants")
+        onSuccess: (_res, variables) => {
+            deleteTenants([variables.tenantId])
         }
     })
 
@@ -135,14 +131,12 @@ export default function TenantsTable({tenants}: TenantsTableProps) {
                 page * rowsPerPage,
                 page * rowsPerPage + rowsPerPage,
             ),
-        [order, orderBy, page, rowsPerPage],
+        [order, orderBy, page, rowsPerPage, tenants],
     );
-
-    console.log(tenants)
 
     return (
         <Box sx={{width: '100%'}}>
-            <Paper sx={{width: '100%', mb: 2}}>
+            <Paper sx={{width: '100%', mb: 2, p: 4}}>
                 <TenantsTableToolbar numSelected={selected.length} deleteTenantHandler={deleteTenantsHandler}/>
                 <TableContainer>
                     <Table
@@ -198,8 +192,6 @@ export default function TenantsTable({tenants}: TenantsTableProps) {
                                         <TableCell align="left">{tenant.email}</TableCell>
                                         <TableCell align="left">{formattedCreateDate}</TableCell>
                                         <TableCell align="left">{formattedExpiredDate}</TableCell>
-                                        <TableCell
-                                            align="left">{tenant.customer_id ? tenant.customer_id : "NO DATA"}</TableCell>
                                         <TableCell align="left">{tenant.install_token}</TableCell>
                                     </TableRow>
                                 );
@@ -226,6 +218,6 @@ export default function TenantsTable({tenants}: TenantsTableProps) {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Paper>
-        </Box>
+       </Box>
     );
 }

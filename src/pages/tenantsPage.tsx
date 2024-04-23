@@ -5,14 +5,19 @@ import {getTenants} from "../lib/api/getTenants.ts";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import TenantsTable from "../components/tables/tenantsTable.tsx";
+import CreateTenantDialog from "../components/dialogs/createTenantDialog.tsx";
+import useTenantsContext from "../hooks/useTenantsContext.ts";
 
 export default function TenantsPage() {
 
     const {apiPrefix, accessToken} = useApiAuthContext()
+    const {addTenants} = useTenantsContext()
 
-    const {data: res, status} = useQuery({
+    const {status} = useQuery({
         queryKey: ["tenants"], queryFn: () => {
             return getTenants({prefixUrl: apiPrefix, accessToken: accessToken})
+        }, onSuccess: res => {
+            addTenants(res.data)
         }
     })
 
@@ -31,7 +36,8 @@ export default function TenantsPage() {
 
     return (
         <Box sx={{m: 0, p: 2, width: "100%"}}>
-            {res?.data && <TenantsTable tenants={res.data}/>}
+            <TenantsTable/>
+            <CreateTenantDialog/>
         </Box>
     )
 }

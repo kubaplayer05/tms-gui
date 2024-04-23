@@ -6,6 +6,7 @@ import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import {Button} from "@mui/material";
+import useTenantsContext from "../../hooks/useTenantsContext.ts";
 
 interface EnhancedTableToolbarProps {
     numSelected: number;
@@ -14,6 +15,8 @@ interface EnhancedTableToolbarProps {
 
 export default function TenantsTableToolbar(props: EnhancedTableToolbarProps) {
     const {numSelected, deleteTenantHandler} = props;
+
+    const {openCreateTenantDialog} = useTenantsContext()
 
     return (
         <Toolbar
@@ -58,7 +61,7 @@ export default function TenantsTableToolbar(props: EnhancedTableToolbarProps) {
                     </IconButton>
                 </Tooltip>
             )}
-            <Button variant="contained" sx={{mx: 2, py: 0.6}}>Create</Button>
+            <Button onClick={openCreateTenantDialog} variant="contained" sx={{mx: 2, py: 0.6}}>Create</Button>
         </Toolbar>
     );
 }
