@@ -5,7 +5,14 @@ export interface Tenant {
     install_token: string,
     email: string,
     expire: string,
-    customer_id: string
+}
+
+export interface CreateTenantBody {
+    id: string,
+    name: string,
+    install_token: string,
+    email: string,
+    expire: string,
 }
 
 export interface GetTenantsError {

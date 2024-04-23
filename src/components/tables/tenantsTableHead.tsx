@@ -57,12 +57,6 @@ const headCells: HeadCell[] = [
         label: 'Expires',
     },
     {
-        id: 'customer_id',
-        numeric: false,
-        disablePadding: true,
-        label: 'Customer Id',
-    },
-    {
         id: 'install_token',
         numeric: false,
         disablePadding: false,
