@@ -7,17 +7,17 @@ import {createTenant} from "../../lib/api/createTenant.ts";
 import useApiAuthContext from "../../hooks/useApiAuthContext.ts";
 
 
-export default function CreateTenantDialog() {
+export default function CreateTenantDialog({value}) {
 
     const {apiPrefix, accessToken} = useApiAuthContext()
     const {addTenant} = useTenantsContext()
     const {isCreateTenantDialogOpen, closeCreateTenantDialog} = useTenantsContext()
-    const [tenantFormData, setTenantFormData] = useState<CreateTenantBody>({
-        "id": "",
-        "name": "",
-        "install_token": "",
-        "email": "",
-        "expire": ""
+    const [tenantFormData, setTenantFormData] = useState<CreateTenantBody>(value || {
+        id: "",
+        name: "",
+        install_token: "",
+        email: "",
+        expire: ""
     })
 
     const mutation = useMutation({
@@ -50,11 +50,11 @@ export default function CreateTenantDialog() {
         }}>
             <DialogTitle>Create Tenant</DialogTitle>
             <DialogContent sx={{display: "flex", flexDirection: "column", gap: 2, minWidth: "600px"}}>
-                <TextField id="id" fullWidth required label="Tenant id" onChange={changeHandler}/>
-                <TextField id="name" fullWidth required label="Tenant name" onChange={changeHandler}/>
-                <TextField id="install_token" fullWidth required label="Install token" onChange={changeHandler}/>
-                <TextField id="email" fullWidth required type="email" label="Tenant email" onChange={changeHandler}/>
-                <TextField id="expire" fullWidth required type="datetime-local" onChange={changeHandler}/>
+                <TextField id="id" value={tenantFormData.id} fullWidth required label="Tenant id" onChange={changeHandler}/>
+                <TextField id="name" value={tenantFormData.name} fullWidth required label="Tenant name" onChange={changeHandler}/>
+                <TextField id="install_token" value={tenantFormData.install_token} fullWidth required label="Install token" onChange={changeHandler}/>
+                <TextField id="email" value={tenantFormData.email} fullWidth required type="email" label="Tenant email" onChange={changeHandler}/>
+                <TextField id="expire" value={tenantFormData.expire} fullWidth required type="datetime-local" onChange={changeHandler}/>
             </DialogContent>
             <DialogActions>
                 <Button onClick={closeCreateTenantDialog}>Cancel</Button>

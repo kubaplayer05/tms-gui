@@ -51,7 +51,7 @@ function stableSort<T>(array: T[], comparator: (a: T, b: T) => number) {
     return stabilizedThis.map((el) => el[0]);
 }
 
-export default function TenantsTable() {
+export default function TenantsTable({onRowClick}) {
 
     const [order, setOrder] = useState<Order>('asc');
     const [orderBy, setOrderBy] = useState<keyof Tenant>('created');
@@ -84,7 +84,7 @@ export default function TenantsTable() {
         setSelected([]);
     };
 
-    const handleClick = (_event: React.MouseEvent<unknown>, id: string) => {
+    const handleSelectClick = (_event: React.MouseEvent<unknown>, id: string) => {
         const selectedIndex = selected.indexOf(id);
         let newSelected: string[] = [];
 
@@ -111,6 +111,12 @@ export default function TenantsTable() {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
+
+    const handleRowClick = (event: React.MouseEvent<unknown>, tenant) => {
+        if(onRowClick instanceof Function) {
+            onRowClick(tenant)
+        }
+    }
 
     const isSelected = (id: string) => selected.indexOf(id) !== -1;
 
@@ -162,7 +168,7 @@ export default function TenantsTable() {
                                 return (
                                     <TableRow
                                         hover
-                                        onClick={(event) => handleClick(event, tenant.id)}
+                                        onClick={(event) => handleRowClick(event, tenant)}
                                         role="checkbox"
                                         aria-checked={isItemSelected}
                                         tabIndex={-1}
@@ -177,6 +183,7 @@ export default function TenantsTable() {
                                                 inputProps={{
                                                     'aria-labelledby': labelId,
                                                 }}
+                                                onClick={(event) => handleSelectClick(event, tenant.id)}
                                             />
                                         </TableCell>
                                         <TableCell
@@ -191,7 +198,6 @@ export default function TenantsTable() {
                                         <TableCell align="left">{tenant.email}</TableCell>
                                         <TableCell align="left">{formattedCreateDate}</TableCell>
                                         <TableCell align="left">{formattedExpiredDate}</TableCell>
-                                        <TableCell align="left">{tenant.install_token}</TableCell>
                                     </TableRow>
                                 );
                             })}

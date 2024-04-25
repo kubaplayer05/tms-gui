@@ -55,13 +55,7 @@ const headCells: HeadCell[] = [
         numeric: false,
         disablePadding: false,
         label: 'Expires',
-    },
-    {
-        id: 'install_token',
-        numeric: false,
-        disablePadding: false,
-        label: 'Install Token',
-    },
+    }
 ];
 
 export default function TenantsTableHead(props: EnhancedTableProps) {
