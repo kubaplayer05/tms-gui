@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as uniqid from "uniqid"
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -13,28 +12,10 @@ import {ChangeEvent, useState} from "react";
 import {Tenant} from "../../types/api";
 import TenantsTableHead from "./tenantsTableHead.tsx";
 import TenantsTableToolbar from "./tenantsTableToolbar.tsx";
-
-// DUMMY DATA
-
-function createData(email: string, created: string, expire: string, name: string, installToken: string): Tenant {
-
-    return {
-        created: created,
-        email: email,
-        expire: expire,
-        install_token: installToken,
-        name: name,
-        customer_id: uniqid.process(),
-        id: uniqid.process()
-    }
-}
-
-const rows = [
-    createData('john.doe@example.com', '2022-01-01T00:00:00.000Z', '2023-01-01T00:00:00.000Z', 'John Doe', 'token1'),
-    createData('jane.doe@example.com', '2022-02-01T00:00:00.000Z', '2023-02-01T00:00:00.000Z', 'Jane Doe', 'token2'),
-    createData('bob.smith@example.com', '2022-03-01T00:00:00.000Z', '2023-03-01T00:00:00.000Z', 'Bob Smith', 'token3'),
-    // Add more data as needed
-];
+import {useMutation} from "react-query";
+import useApiAuthContext from "../../hooks/useApiAuthContext.ts";
+import {deleteTenant} from "../../lib/api/deleteTenant.ts";
+import useTenantsContext from "../../hooks/useTenantsContext.ts";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
     if (b[orderBy] < a[orderBy]) {
@@ -49,8 +30,8 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
 export type Order = 'asc' | 'desc';
 
 function getComparator<Key extends keyof Tenant>(order: Order, orderBy: Key,): (
-    a: { [key in Key]: number | string },
-    b: { [key in Key]: number | string },
+    a: { [key in Key]: string },
+    b: { [key in Key]: string },
 ) => number {
     return order === 'desc'
         ? (a, b) => descendingComparator(a, b, orderBy)
@@ -78,6 +59,16 @@ export default function TenantsTable() {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(20);
 
+    const {accessToken, apiPrefix} = useApiAuthContext()
+    const {tenants, deleteTenants} = useTenantsContext()
+
+    const mutation = useMutation({
+        mutationFn: deleteTenant,
+        onSuccess: (_res, variables) => {
+            deleteTenants([variables.tenantId])
+        }
+    })
+
     const handleRequestSort = (_event: React.MouseEvent<unknown>, property: keyof Tenant,) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -86,7 +77,7 @@ export default function TenantsTable() {
 
     const handleSelectAllClick = (event: ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
-            const newSelected = rows.map((n) => n.id);
+            const newSelected = tenants.map((n) => n.id);
             setSelected(newSelected);
             return;
         }
@@ -123,23 +114,29 @@ export default function TenantsTable() {
 
     const isSelected = (id: string) => selected.indexOf(id) !== -1;
 
+    const deleteTenantsHandler = () => {
+        selected.forEach(tenantId => {
+            mutation.reset()
+            mutation.mutate({tenantId, accessToken, prefixUrl: apiPrefix})
+        })
+    }
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows =
-        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tenants.length) : 0;
 
-    const visibleRows = React.useMemo(
+    const visibleTenants = React.useMemo(
         () =>
-            stableSort(rows, getComparator(order, orderBy)).slice(
+            stableSort(tenants, getComparator(order, orderBy)).slice(
                 page * rowsPerPage,
                 page * rowsPerPage + rowsPerPage,
             ),
-        [order, orderBy, page, rowsPerPage],
+        [order, orderBy, page, rowsPerPage, tenants],
     );
 
     return (
         <Box sx={{width: '100%'}}>
             <Paper sx={{width: '100%', mb: 2, p: 4}}>
-                <TenantsTableToolbar numSelected={selected.length}/>
+                <TenantsTableToolbar numSelected={selected.length} deleteTenantHandler={deleteTenantsHandler}/>
                 <TableContainer>
                     <Table
                         sx={{minWidth: 750}}
@@ -152,21 +149,24 @@ export default function TenantsTable() {
                             orderBy={orderBy}
                             onSelectAllClick={handleSelectAllClick}
                             onRequestSort={handleRequestSort}
-                            rowCount={rows.length}
+                            rowCount={tenants.length}
                         />
                         <TableBody>
-                            {visibleRows.map((row, index) => {
-                                const isItemSelected = isSelected(row.id);
+                            {visibleTenants.map((tenant, index) => {
+                                const isItemSelected = isSelected(tenant.id);
                                 const labelId = `enhanced-table-checkbox-${index}`;
+
+                                const formattedExpiredDate = new Date(tenant.expire).toLocaleString()
+                                const formattedCreateDate = new Date(tenant.created).toLocaleString()
 
                                 return (
                                     <TableRow
                                         hover
-                                        onClick={(event) => handleClick(event, row.id)}
+                                        onClick={(event) => handleClick(event, tenant.id)}
                                         role="checkbox"
                                         aria-checked={isItemSelected}
                                         tabIndex={-1}
-                                        key={row.id}
+                                        key={tenant.id}
                                         selected={isItemSelected}
                                         sx={{cursor: 'pointer'}}
                                     >
@@ -185,14 +185,13 @@ export default function TenantsTable() {
                                             scope="row"
                                             padding="none"
                                         >
-                                            {row.id}
+                                            {tenant.id}
                                         </TableCell>
-                                        <TableCell align="left">{row.name}</TableCell>
-                                        <TableCell align="left">{row.email}</TableCell>
-                                        <TableCell align="left">{row.created}</TableCell>
-                                        <TableCell align="left">{row.expire}</TableCell>
-                                        <TableCell align="left">{row.customer_id}</TableCell>
-                                        <TableCell align="left">{row.install_token}</TableCell>
+                                        <TableCell align="left">{tenant.name}</TableCell>
+                                        <TableCell align="left">{tenant.email}</TableCell>
+                                        <TableCell align="left">{formattedCreateDate}</TableCell>
+                                        <TableCell align="left">{formattedExpiredDate}</TableCell>
+                                        <TableCell align="left">{tenant.install_token}</TableCell>
                                     </TableRow>
                                 );
                             })}
@@ -211,13 +210,13 @@ export default function TenantsTable() {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={rows.length}
+                    count={tenants.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Paper>
-       </Box>
+        </Box>
     );
 }

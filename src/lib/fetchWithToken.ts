@@ -12,6 +12,7 @@ export function fetchWithToken({url, accessToken, options}: FetchWithTokenParams
         ...options,
         url: url,
         headers: {
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${accessToken}`
         }
     }
