@@ -1,9 +1,13 @@
-import * as React from "react";
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField} from "@mui/material";
+import {Tenant} from "../../types/api";
 
+interface TenantDetailsDialogProps {
+    value: Tenant,
+    open: boolean,
+    onClose: () => void
+}
 
-
-export default function TenantDetailsDialog({value, open, onClose}) {
+export default function TenantDetailsDialog({value, open, onClose} : TenantDetailsDialogProps) {
 
     return (
         <Dialog open={open} onClose={onClose}>

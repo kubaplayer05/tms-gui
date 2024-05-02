@@ -1,24 +1,65 @@
-import * as React from "react";
 import {CircularProgress} from "@mui/material";
 import useApiAuthContext from "../hooks/useApiAuthContext.ts";
 import {useQuery} from "react-query";
 import {getTenants} from "../lib/api/getTenants.ts";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import TenantsTable from "../components/tables/tenantsTable.tsx";
-import CreateTenantDialog from "../components/dialogs/createTenantDialog.tsx";
-import useTenantsContext from "../hooks/useTenantsContext.ts";
 import {useState} from "react";
 import TenantDetailsDialog from "../components/dialogs/TenantDetailsDialog";
+import {Tenant} from "../types/api";
+import DataTable from "../components/tables/dataTable.tsx";
+import {deleteTenant} from "../lib/api/deleteTenant.ts";
+import {HeadCell} from "../types/table";
 
 export default function TenantsPage() {
 
     const {apiPrefix, accessToken} = useApiAuthContext()
-    const {addTenants} = useTenantsContext()
-    const [currentTenant, setCurrentTenant] = useState(null)
+    const [tenants, setTenants] = useState<Tenant[]>([])
+    const [currentTenant, setCurrentTenant] = useState<Tenant | null>(null)
     const [openDetails, setOpenDetails] = useState(false)
 
-    const handleRowClick = (tenant) => {
+    const headCells: HeadCell<Tenant>[] = [
+        {
+            id: "id",
+            numeric: false,
+            label: "id",
+            disablePadding: false,
+        },
+        {
+            id: "name",
+            numeric: false,
+            label: "name",
+            disablePadding: false,
+        },
+        {
+            id: "email",
+            numeric: false,
+            label: "email",
+            disablePadding: false,
+        },
+        {
+            id: "created",
+            numeric: false,
+            label: "created at",
+            disablePadding: false,
+        },
+        {
+            id: "expire",
+            numeric: false,
+            label: "expire at",
+            disablePadding: false,
+        },
+    ]
+
+    const handleTenantDeletion = (id: string) => {
+        console.log(id)
+    }
+
+    const handleOpenTenantDetails = () => {
+        console.log("open")
+    }
+
+    const handleRowClick = (tenant: Tenant) => {
         setCurrentTenant(tenant)
         setOpenDetails(true)
     }
@@ -27,7 +68,7 @@ export default function TenantsPage() {
         queryKey: ["tenants"], queryFn: () => {
             return getTenants({prefixUrl: apiPrefix, accessToken: accessToken})
         }, onSuccess: res => {
-            addTenants(res.data)
+            setTenants(res.data)
         }
     })
 
@@ -46,9 +87,10 @@ export default function TenantsPage() {
 
     return (
         <Box sx={{m: 0, p: 2, width: "100%"}}>
-            <TenantsTable onRowClick={handleRowClick}/>
-            <CreateTenantDialog/>
-            {currentTenant && <TenantDetailsDialog open={openDetails} onClose={() => setOpenDetails(false)} value={currentTenant}/>}
+            <DataTable onRowClick={handleRowClick} data={tenants} title="Tenants Table" deleteFn={deleteTenant}
+                       onDeleteSuccess={handleTenantDeletion} headCells={headCells} onCreateBtnClick={handleOpenTenantDetails}/>
+            {currentTenant &&
+                <TenantDetailsDialog open={openDetails} onClose={() => setOpenDetails(false)} value={currentTenant}/>}
         </Box>
     )
 }

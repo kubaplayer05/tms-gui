@@ -1,13 +1,13 @@
 import {Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, TextField} from "@mui/material";
 import useTenantsContext from "../../hooks/useTenantsContext.ts";
 import {ChangeEvent, FormEvent, useState} from "react";
-import {CreateTenantBody} from "../../types/api";
+import {CreateTenantBody, Tenant} from "../../types/api";
 import {useMutation} from "react-query";
 import {createTenant} from "../../lib/api/createTenant.ts";
 import useApiAuthContext from "../../hooks/useApiAuthContext.ts";
 
 
-export default function CreateTenantDialog({value}) {
+export default function CreateTenantDialog({value}: {value: Tenant}) {
 
     const {apiPrefix, accessToken} = useApiAuthContext()
     const {addTenant} = useTenantsContext()
@@ -21,7 +21,8 @@ export default function CreateTenantDialog({value}) {
     })
 
     const mutation = useMutation({
-        mutationFn: createTenant, onSuccess: (res) => {
+        mutationFn: createTenant,
+        onSuccess: (res) => {
             addTenant(res.data)
             closeCreateTenantDialog()
         }

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -8,14 +7,16 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
-import {ChangeEvent, useState} from "react";
-import {Tenant} from "../../types/api";
-import TenantsTableHead from "./tenantsTableHead.tsx";
-import TenantsTableToolbar from "./tenantsTableToolbar.tsx";
+import React, {ChangeEvent, useState} from "react";
 import {useMutation} from "react-query";
 import useApiAuthContext from "../../hooks/useApiAuthContext.ts";
-import {deleteTenant} from "../../lib/api/deleteTenant.ts";
-import useTenantsContext from "../../hooks/useTenantsContext.ts";
+import DataTableHead from "./dataTableHead.tsx";
+import DataTableToolbar from "./dataTableToolbar.tsx";
+import {HeadCell} from "../../types/table";
+import {DeleteFnParams, ValidationError} from "../../types/api";
+import {AxiosResponse} from "axios";
+
+export type Order = 'asc' | 'desc';
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
     if (b[orderBy] < a[orderBy]) {
@@ -26,18 +27,6 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
     }
     return 0;
 }
-
-export type Order = 'asc' | 'desc';
-
-function getComparator<Key extends keyof Tenant>(order: Order, orderBy: Key,): (
-    a: { [key in Key]: string },
-    b: { [key in Key]: string },
-) => number {
-    return order === 'desc'
-        ? (a, b) => descendingComparator(a, b, orderBy)
-        : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
 
 function stableSort<T>(array: T[], comparator: (a: T, b: T) => number) {
     const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
@@ -51,25 +40,61 @@ function stableSort<T>(array: T[], comparator: (a: T, b: T) => number) {
     return stabilizedThis.map((el) => el[0]);
 }
 
-export default function TenantsTable({onRowClick}) {
+
+interface DataTableProps<TData> {
+    onRowClick: (data: TData) => void,
+    data: TData[],
+    title: string,
+    deleteFn: ({id, accessToken, prefixUrl}: DeleteFnParams) => Promise<AxiosResponse<string, ValidationError>>,
+    onDeleteSuccess: (id: AxiosResponse<string, ValidationError>) => void,
+    onCreateBtnClick: () => void,
+    headCells: HeadCell<TData>[]
+}
+
+export default function DataTable<TData extends { id: string }>({
+                                                                    onRowClick,
+                                                                    data,
+                                                                    deleteFn,
+                                                                    onDeleteSuccess,
+                                                                    headCells,
+                                                                    title,
+                                                                    onCreateBtnClick
+                                                                }: DataTableProps<TData>) {
 
     const [order, setOrder] = useState<Order>('asc');
-    const [orderBy, setOrderBy] = useState<keyof Tenant>('created');
+    const [orderBy, setOrderBy] = useState<keyof TData>("id");
     const [selected, setSelected] = useState<string[]>([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(20);
 
-    const {accessToken, apiPrefix} = useApiAuthContext()
-    const {tenants, deleteTenants} = useTenantsContext()
-
-    const mutation = useMutation({
-        mutationFn: deleteTenant,
-        onSuccess: (_res, variables) => {
-            deleteTenants([variables.tenantId])
+    function renderCellContent(content: TData[keyof TData]): React.ReactNode {
+        if (typeof content === 'string') {
+            return content;
+        } else if (typeof content === 'object') {
+            // Convert object to string or handle it differently depending on your needs
+            return JSON.stringify(content);
+        } else {
+            // Handle other types if needed
+            return null;
         }
+    }
+
+    function getComparator<Key extends keyof TData>(order: Order, orderBy: Key,): (
+        a: TData,
+        b: TData,
+    ) => number {
+        return order === 'desc'
+            ? (a, b) => descendingComparator(a, b, orderBy)
+            : (a, b) => -descendingComparator(a, b, orderBy);
+    }
+
+    const {accessToken, apiPrefix} = useApiAuthContext()
+
+    const mutation = useMutation(deleteFn, {
+        onSuccess: onDeleteSuccess
     })
 
-    const handleRequestSort = (_event: React.MouseEvent<unknown>, property: keyof Tenant,) => {
+    const handleRequestSort = (_event: React.MouseEvent<unknown>, property: keyof TData,) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
@@ -77,14 +102,14 @@ export default function TenantsTable({onRowClick}) {
 
     const handleSelectAllClick = (event: ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
-            const newSelected = tenants.map((n) => n.id);
+            const newSelected = data.map((n) => n.id);
             setSelected(newSelected);
             return;
         }
         setSelected([]);
     };
 
-    const handleSelectClick = (_event: React.MouseEvent<unknown>, id: string) => {
+    const handleSelectClick = (_event: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
         const selectedIndex = selected.indexOf(id);
         let newSelected: string[] = [];
 
@@ -112,67 +137,63 @@ export default function TenantsTable({onRowClick}) {
         setPage(0);
     };
 
-    const handleRowClick = (event: React.MouseEvent<unknown>, tenant) => {
-        if(onRowClick instanceof Function) {
-            onRowClick(tenant)
-        }
+    const handleRowClick = (data: TData) => {
+        onRowClick(data)
     }
 
     const isSelected = (id: string) => selected.indexOf(id) !== -1;
 
-    const deleteTenantsHandler = () => {
-        selected.forEach(tenantId => {
+    const deleteHandler = () => {
+        selected.forEach(id => {
             mutation.reset()
-            mutation.mutate({tenantId, accessToken, prefixUrl: apiPrefix})
+            mutation.mutate({id, accessToken, prefixUrl: apiPrefix})
         })
     }
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows =
-        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tenants.length) : 0;
+        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0;
 
-    const visibleTenants = React.useMemo(
+    const visibleData = React.useMemo(
         () =>
-            stableSort(tenants, getComparator(order, orderBy)).slice(
+            stableSort(data, getComparator(order, orderBy)).slice(
                 page * rowsPerPage,
                 page * rowsPerPage + rowsPerPage,
             ),
-        [order, orderBy, page, rowsPerPage, tenants],
+        [order, orderBy, page, rowsPerPage, data],
     );
 
     return (
         <Box sx={{width: '100%'}}>
             <Paper sx={{width: '100%', mb: 2, p: 4}}>
-                <TenantsTableToolbar numSelected={selected.length} deleteTenantHandler={deleteTenantsHandler}/>
+                <DataTableToolbar title={title} numSelected={selected.length} deleteHandler={deleteHandler}
+                                  onCreateBtnClick={onCreateBtnClick}/>
                 <TableContainer>
                     <Table
                         sx={{minWidth: 750}}
                         aria-labelledby="tableTitle"
                         size={'medium'}
                     >
-                        <TenantsTableHead
+                        <DataTableHead
                             numSelected={selected.length}
+                            onRequestSort={handleRequestSort}
+                            onSelectAllClick={handleSelectAllClick}
                             order={order}
                             orderBy={orderBy}
-                            onSelectAllClick={handleSelectAllClick}
-                            onRequestSort={handleRequestSort}
-                            rowCount={tenants.length}
-                        />
+                            rowCount={data.length}
+                            headCells={headCells}/>
                         <TableBody>
-                            {visibleTenants.map((tenant, index) => {
-                                const isItemSelected = isSelected(tenant.id);
+                            {visibleData.map((dataItem, index) => {
+                                const isItemSelected = isSelected(dataItem.id);
                                 const labelId = `enhanced-table-checkbox-${index}`;
-
-                                const formattedExpiredDate = new Date(tenant.expire).toLocaleString()
-                                const formattedCreateDate = new Date(tenant.created).toLocaleString()
 
                                 return (
                                     <TableRow
                                         hover
-                                        onClick={(event) => handleRowClick(event, tenant)}
+                                        onClick={() => handleRowClick(dataItem)}
                                         role="checkbox"
                                         aria-checked={isItemSelected}
                                         tabIndex={-1}
-                                        key={tenant.id}
+                                        key={dataItem.id}
                                         selected={isItemSelected}
                                         sx={{cursor: 'pointer'}}
                                     >
@@ -183,7 +204,7 @@ export default function TenantsTable({onRowClick}) {
                                                 inputProps={{
                                                     'aria-labelledby': labelId,
                                                 }}
-                                                onClick={(event) => handleSelectClick(event, tenant.id)}
+                                                onClick={(event) => handleSelectClick(event, dataItem.id)}
                                             />
                                         </TableCell>
                                         <TableCell
@@ -192,12 +213,17 @@ export default function TenantsTable({onRowClick}) {
                                             scope="row"
                                             padding="none"
                                         >
-                                            {tenant.id}
+                                            {dataItem.id}
                                         </TableCell>
-                                        <TableCell align="left">{tenant.name}</TableCell>
-                                        <TableCell align="left">{tenant.email}</TableCell>
-                                        <TableCell align="left">{formattedCreateDate}</TableCell>
-                                        <TableCell align="left">{formattedExpiredDate}</TableCell>
+                                        {headCells.map(cell => {
+                                            if (cell.id !== "id") {
+                                                return (
+                                                    <TableCell align="left">
+                                                        {renderCellContent(dataItem[cell.id])}
+                                                    </TableCell>
+                                                )
+                                            }
+                                        })}
                                     </TableRow>
                                 );
                             })}
@@ -216,7 +242,7 @@ export default function TenantsTable({onRowClick}) {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={tenants.length}
+                    count={data.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
