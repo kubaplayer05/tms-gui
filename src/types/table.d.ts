@@ -3,4 +3,5 @@ export interface HeadCell<TData> {
     id: keyof TData;
     label: string;
     numeric: boolean;
+    dateFormat: boolean;
 }
