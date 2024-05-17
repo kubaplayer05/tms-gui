@@ -13,7 +13,8 @@ import Grid from "@mui/material/Unstable_Grid2";
 interface TenantDialogProps {
     open: boolean,
     onClose: () => void,
-    onSuccess: (data: AxiosResponse<Tenant, ValidationError>, variables: CreateTenantParams) => void
+    onSuccess: (data: AxiosResponse<Tenant, ValidationError>, variables: CreateTenantParams) => void,
+    onError: () => void
     value: Tenant | null
 }
 
@@ -25,7 +26,7 @@ interface Inputs {
     expire: string
 }
 
-export default function TenantDetailsDialog({open, onClose, value, onSuccess}: TenantDialogProps) {
+export default function TenantDetailsDialog({open, onClose, value, onSuccess, onError}: TenantDialogProps) {
 
     const {apiPrefix, accessToken} = useApiAuthContext()
     const title = value ? "Tenant details" : "Tenant creation"
@@ -43,7 +44,8 @@ export default function TenantDetailsDialog({open, onClose, value, onSuccess}: T
 
     const mutation = useMutation({
         mutationFn: createTenant,
-        onSuccess: onSuccess
+        onSuccess: onSuccess,
+        onError: onError
     })
 
     useEffect(() => {

@@ -57,6 +57,7 @@ interface DataTableProps<TData> {
     warningDialogText: string,
     deleteFn: ({id, accessToken, prefixUrl}: DeleteFnParams) => Promise<AxiosResponse<string, ValidationError>>,
     onDeleteSuccess: (res: AxiosResponse<string, ValidationError>, variables: DeleteFnParams) => void,
+    onDeleteError: () => void
     onCreateBtnClick: () => void,
     headCells: HeadCell<TData>[]
 }
@@ -72,7 +73,8 @@ export default function DataTable<TData extends { id: string }>({
                                                                     deleteTooltipTitle,
                                                                     editTooltipTitle,
                                                                     warningDialogTitle,
-                                                                    warningDialogText
+                                                                    warningDialogText,
+                                                                    onDeleteError
                                                                 }: DataTableProps<TData>) {
 
     const [order, setOrder] = useState<Order>('asc');
@@ -110,6 +112,11 @@ export default function DataTable<TData extends { id: string }>({
             setSelected([])
             setOpenDialog(false)
             onDeleteSuccess(data, variables)
+        },
+        onError: () => {
+            setSelected([])
+            setOpenDialog(false)
+            onDeleteError()
         }
     })
 
@@ -268,7 +275,8 @@ export default function DataTable<TData extends { id: string }>({
                                                     <FaEdit/>
                                                 </IconButton>
                                             </Tooltip>
-                                            <Tooltip title={deleteTooltipTitle} onClick={() => handleRowDeleteIconClick(dataItem)}>
+                                            <Tooltip title={deleteTooltipTitle}
+                                                     onClick={() => handleRowDeleteIconClick(dataItem)}>
                                                 <IconButton size="small">
                                                     <DeleteIcon/>
                                                 </IconButton>
