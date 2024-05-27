@@ -3,7 +3,7 @@ import {TextField} from "@mui/material";
 import {Tenant, ValidationError} from "../../types/api";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {useEffect} from "react";
-import {useMutation} from "react-query";
+import {useMutation} from "@tanstack/react-query";
 import {createTenant, CreateTenantParams} from "../../lib/api/createTenant.ts";
 import useApiAuthContext from "../../hooks/useApiAuthContext.ts";
 import Typography from "@mui/material/Typography";

@@ -8,7 +8,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
 import React, {ChangeEvent, useState} from "react";
-import {useMutation} from "react-query";
+import {useMutation} from "@tanstack/react-query";
 import useApiAuthContext from "../../../hooks/useApiAuthContext.ts";
 import DataTableHead from "./dataTableHead.tsx";
 import DataTableToolbar from "./dataTableToolbar.tsx";
@@ -107,13 +107,15 @@ export default function DataTable<TData extends { id: string }>({
 
     const {accessToken, apiPrefix} = useApiAuthContext()
 
-    const mutation = useMutation(deleteFn, {
-        onSuccess: (data, variables) => {
+    const mutation = useMutation( {
+        mutationFn: deleteFn,
+        onSuccess: (data: AxiosResponse<string, ValidationError>, variables: DeleteFnParams) => {
             setSelected([])
             setOpenDialog(false)
             onDeleteSuccess(data, variables)
         },
-        onError: () => {
+        onError: (error) => {
+            console.error(error)
             setSelected([])
             setOpenDialog(false)
             onDeleteError()

@@ -1,10 +1,10 @@
 import {CircularProgress} from "@mui/material";
 import useApiAuthContext from "../hooks/useApiAuthContext.ts";
-import {useQuery} from "react-query";
+import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {getTenants} from "../lib/api/getTenants.ts";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {DeleteFnParams, Tenant, ValidationError} from "../types/api";
 import {AxiosResponse} from "axios";
 import TenantsTable from "../components/tables/tenantsTable.tsx";
@@ -16,6 +16,7 @@ import Paper from "@mui/material/Paper";
 export default function TenantsPage() {
 
     const {apiPrefix, accessToken} = useApiAuthContext()
+    const queryClient = useQueryClient()
 
     const [tenants, setTenants] = useState<Tenant[]>([])
     const [currentTenant, setCurrentTenant] = useState<Tenant | null>(null)
@@ -29,9 +30,16 @@ export default function TenantsPage() {
     const handleTenantDeletion = (_res: AxiosResponse<string, ValidationError>, variables: DeleteFnParams) => {
         const {id} = variables
 
-        setTenants(prevState => {
-            return prevState.filter(tenant => tenant.id !== id)
+        queryClient.setQueryData(["tenants"], (queryData: AxiosResponse<Tenant[], ValidationError>) => {
+            const tenants = queryData.data
+            const filteredTenants = tenants.filter(tenant => tenant.id !== id)
+
+            return {
+                ...queryData,
+                data: filteredTenants
+            }
         })
+
 
         setSnackbarData({
             content: "Successfully deleted tenant",
@@ -82,15 +90,20 @@ export default function TenantsPage() {
         setOpenDetails(true)
     }
 
-    const {data,status, error} = useQuery({
+    const {data, status, error,} = useQuery({
         queryKey: ["tenants"], queryFn: () => {
             return getTenants({prefixUrl: apiPrefix, accessToken: accessToken})
-        }, onSuccess: res => {
-            setTenants(res.data)
-        }
+        },
     })
 
-    if (status === "loading") {
+    useEffect(() => {
+        if (data) {
+            const tenantData = data.data
+            setTenants(tenantData)
+        }
+    }, [data]);
+
+    if (status === "pending") {
         return (<Box sx={{m: 0, p: 2, width: "100%", display: "flex", justifyContent: "center"}}>
             <CircularProgress/>
         </Box>)
@@ -109,7 +122,7 @@ export default function TenantsPage() {
 
     return (
         <Box sx={{m: 0, p: 2, width: "100%"}}>
-            <TenantsTable data={tenants} onRowClick={handleRowClick} onCreateBtnClick={handleOpenTenantDetails}
+            <TenantsTable data={data?.data} onRowClick={handleRowClick} onCreateBtnClick={handleOpenTenantDetails}
                           onDeleteSuccess={handleTenantDeletion} onDeleteError={handleTenantDeletionError}/>
             <TenantDetailsDialog open={openDetails} onClose={() => setOpenDetails(false)} value={currentTenant}
                                  onSuccess={handleTenantsUpdate} onError={handleTenantsUpdateError}/>
