@@ -4,7 +4,7 @@ import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {getTenants} from "../lib/api/getTenants.ts";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {DeleteFnParams, Tenant, ValidationError} from "../types/api";
 import {AxiosResponse} from "axios";
 import TenantsTable from "../components/tables/tenantsTable.tsx";
@@ -18,7 +18,6 @@ export default function TenantsPage() {
     const {apiPrefix, accessToken} = useApiAuthContext()
     const queryClient = useQueryClient()
 
-    const [tenants, setTenants] = useState<Tenant[]>([])
     const [currentTenant, setCurrentTenant] = useState<Tenant | null>(null)
     const [openDetails, setOpenDetails] = useState(false)
     const [openSnackbar, setOpenSnackbar] = useState(false)
@@ -62,11 +61,14 @@ export default function TenantsPage() {
     }
 
     const handleTenantsUpdate = (res: AxiosResponse<Tenant, ValidationError>) => {
-        setTenants(prevState => {
+        queryClient.setQueryData(["tenants"], (queryData: AxiosResponse<Tenant[], ValidationError>) => {
+            const tenants = queryData.data
+            const filteredTenants = tenants.filter(tenant => tenant.id !== res.data.id)
 
-            const filteredTenants = prevState.filter(tenant => tenant.id !== res.data.id)
-
-            return [...filteredTenants, res.data]
+            return {
+                ...queryData,
+                data: [...filteredTenants, res.data]
+            }
         })
 
         setOpenDetails(false)
@@ -96,13 +98,6 @@ export default function TenantsPage() {
         },
     })
 
-    useEffect(() => {
-        if (data) {
-            const tenantData = data.data
-            setTenants(tenantData)
-        }
-    }, [data]);
-
     if (status === "pending") {
         return (<Box sx={{m: 0, p: 2, width: "100%", display: "flex", justifyContent: "center"}}>
             <CircularProgress/>
@@ -120,9 +115,11 @@ export default function TenantsPage() {
         </Box>)
     }
 
+    const tenants = data?.data
+
     return (
         <Box sx={{m: 0, p: 2, width: "100%"}}>
-            <TenantsTable data={data?.data} onRowClick={handleRowClick} onCreateBtnClick={handleOpenTenantDetails}
+            <TenantsTable data={tenants} onRowClick={handleRowClick} onCreateBtnClick={handleOpenTenantDetails}
                           onDeleteSuccess={handleTenantDeletion} onDeleteError={handleTenantDeletionError}/>
             <TenantDetailsDialog open={openDetails} onClose={() => setOpenDetails(false)} value={currentTenant}
                                  onSuccess={handleTenantsUpdate} onError={handleTenantsUpdateError}/>
