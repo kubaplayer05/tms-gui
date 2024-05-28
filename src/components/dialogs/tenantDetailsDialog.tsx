@@ -58,7 +58,7 @@ export default function TenantDetailsDialog({open, onClose, value, onSuccess, on
     }
 
     return (
-        <DetailsDialog open={open} onSubmit={handleSubmit(onSubmit)} title={title} onClose={onClose}>
+        <DetailsDialog open={open} onSubmit={handleSubmit(onSubmit)} title={title} onClose={onClose} isPending={mutation.isPending}>
             <Grid container spacing={2} sx={{padding: "0.4rem 0"}}>
                 <Grid xs={6}>
                     <TextField label="Tenant id" fullWidth inputProps={{readOnly: value !== null}}

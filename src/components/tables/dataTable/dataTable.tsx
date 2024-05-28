@@ -309,7 +309,7 @@ export default function DataTable<TData extends { id: string }>({
                     />
                 </Paper>
             </Box>
-            <DetailsDialog isForm={false} open={openDialog} onClose={() => {
+            <DetailsDialog isForm={false} isPending={mutation.isPending} open={openDialog} onClose={() => {
                 setSelected([])
                 setOpenDialog(false)
             }} onSubmit={deleteHandler} title={warningDialogTitle}>
