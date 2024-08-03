@@ -1,4 +1,5 @@
 export interface IQueueStats {
+    backlogSize: number,
     msgRateIn: number,
     msgThroughputIn: number,
     msgRateOut: number,
