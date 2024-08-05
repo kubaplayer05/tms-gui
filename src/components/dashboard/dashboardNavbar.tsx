@@ -1,19 +1,27 @@
 import Box from "@mui/material/Box";
-import {FormControl, InputLabel, MenuItem, Select} from "@mui/material";
+import {FormControl, InputLabel, LinearProgress, MenuItem, Select, SelectChangeEvent} from "@mui/material";
 
-export default function DashboardNavbar() {
+interface IDashboardNavbar {
+    refreshTime: number,
+    onRefreshTimeChange: (e: SelectChangeEvent<number>) => void,
+    fetchStatus: "fetching" | "idle" | "paused"
+}
+
+export default function DashboardNavbar({refreshTime, onRefreshTimeChange, fetchStatus}: IDashboardNavbar) {
 
     return (
-        <Box sx={{padding: "0.6rem 1rem", width: "100%"}}>
+        <Box sx={{padding: "0.6rem 1rem", width: "100%", display: "flex", alignItems: "center", gap: "1rem"}}>
             <FormControl sx={{m: 1, minWidth: 120}} size="small" variant="filled">
                 <InputLabel id="refresh">Refresh</InputLabel>
-                <Select defaultValue={10} autoWidth={true} labelId="refresh" label={"refresh"}>
-                    <MenuItem value={5}>5 second</MenuItem>
-                    <MenuItem value={10}>10 second</MenuItem>
-                    <MenuItem value={30}>30 second</MenuItem>
-                    <MenuItem value={60}>1 minute</MenuItem>
+                <Select value={refreshTime} autoWidth={true} labelId="refresh" label={"refresh"}
+                        onChange={onRefreshTimeChange}>
+                    <MenuItem value={5000}>5 second</MenuItem>
+                    <MenuItem value={10000}>10 second</MenuItem>
+                    <MenuItem value={30000}>30 second</MenuItem>
+                    <MenuItem value={60000}>1 minute</MenuItem>
                 </Select>
             </FormControl>
+            {fetchStatus === "fetching" && <LinearProgress color="secondary" sx={{width: "100%"}}/>}
         </Box>
     )
 }
