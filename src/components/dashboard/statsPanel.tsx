@@ -9,6 +9,8 @@ import Divider from "@mui/material/Divider";
 import {IQueueStats} from "../../types/api/queue";
 import {AxiosResponse} from "axios";
 import {IValidationError} from "../../types/api/api";
+import SubscriptionsList from "./subscriptionsList.tsx";
+import Box from "@mui/material/Box";
 
 interface IStatsPanel {
     status: "success" | "pending" | "error",
@@ -41,11 +43,20 @@ export default function StatsPanel({data, status, maxRate, refreshData, fetchSta
     const statsData = data.data
 
     return (
-        <Paper sx={{width: "100%", height: "100%"}} square={false}>
-            <DashboardNavbar refreshTime={refreshData.time} onRefreshTimeChange={refreshData.onChange}
-                             fetchStatus={fetchStatus}/>
-            <Divider/>
-            <Grid container spacing={2} sx={{padding: "2rem"}}>
+        <Paper sx={{
+            width: "100%",
+            height: "100%",
+            padding: "0 2rem 1rem 2rem",
+            display: "flex",
+            flexDirection: "column",
+            gap: "2rem"
+        }} square={false}>
+            <Box>
+                <DashboardNavbar refreshTime={refreshData.time} onRefreshTimeChange={refreshData.onChange}
+                                 fetchStatus={fetchStatus}/>
+                <Divider/>
+            </Box>
+            <Grid container spacing={2}>
                 <Grid item xs={3}>
                     <ConnectionGauge rate={statsData.msgRateIn} maxRate={maxRate} label={"Msg Rate In"}
                                      throughput={statsData.msgThroughputIn}/>
@@ -58,6 +69,7 @@ export default function StatsPanel({data, status, maxRate, refreshData, fetchSta
                                      throughput={statsData.msgThroughputOut}/>
                 </Grid>
             </Grid>
+            <SubscriptionsList subscriptions={statsData.subscriptions}/>
         </Paper>
     )
 }

@@ -16,6 +16,6 @@ export interface ISubscription {
     unackedMessages: number
     type: string
     consumers: unknown[]
-    durable: boolean
-    replicated: boolean
+    isDurable: boolean
+    isReplicated: boolean
 }
