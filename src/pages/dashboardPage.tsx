@@ -36,31 +36,22 @@ export default function DashboardPage() {
         }, refetchInterval: refetchInterval
     })
 
-    const [sources, setSources] = useState<ISources[]>([
-        {id: 1, label: "Elasticsearch", connectionStatus: elasticsearchStatus, testConnection: testElasticsearch}, {
-            id: 2,
-            label: "Queue",
-            connectionStatus: queueStatus,
-            testConnection: testQueue
-        }
-    ])
-
-    const sourceStatusMap: { [key: string]: "success" | "error" | "idle" | "pending" } = {
-        "Elasticsearch": elasticsearchStatus,
-        "Queue": queueStatus
-    }
+    const baseSources = [{
+        id: 1,
+        label: "Elasticsearch",
+        connectionStatus: elasticsearchStatus,
+        testConnection: testElasticsearch
+    }, {
+        id: 2,
+        label: "Queue",
+        connectionStatus: queueStatus,
+        testConnection: testQueue
+    }]
+    const [sources, setSources] = useState<ISources[]>(baseSources)
 
     useEffect(() => {
-        setSources(prevState => {
-            const updatedSources: ISources[] = []
-            for (const source of prevState) {
-                source.connectionStatus = sourceStatusMap[source.label]
-                updatedSources.push(source)
-            }
-
-            return updatedSources
-        })
-    }, [queueStatus, elasticsearchStatus])
+        setSources(baseSources)
+    }, [queueStatus, elasticsearchStatus]);
 
     return (
         <Box sx={{m: 0, p: 2, width: "100%", height: "100%", display: "flex", gap: "2rem"}}>

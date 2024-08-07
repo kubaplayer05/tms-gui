@@ -1,6 +1,6 @@
-import {Paper, Box, Typography, Button, Stack} from "@mui/material"
+import {Box, Typography, Button, Stack} from "@mui/material"
 import {Circle} from "@mui/icons-material";
-import {useTheme} from "@mui/material/styles";
+import DashboardPaperCard from "../ui/dashboardPaperCard.tsx";
 
 type ConnectionStatus = "success" | "pending" | "error" | "idle"
 type DominatingColor = "success" | "warning" | "error"
@@ -42,20 +42,11 @@ function getStatusObject(status: ConnectionStatus): { color: DominatingColor, te
 
 export default function SourceConnectionCard({label, connectionStatus, onClick}: IConnectionCard) {
 
-    const {palette} = useTheme()
     const {text, color} = getStatusObject(connectionStatus)
     const isLoading = connectionStatus === "pending" || connectionStatus === "idle"
 
-    const bgColor = palette.background.default
-    const contrastColor = palette.text.primary
-
     return (
-        <Paper
-            sx={{
-                bgcolor: bgColor,
-                color: contrastColor,
-                padding: "1rem 1.4rem",
-            }}>
+        <DashboardPaperCard sx={{padding: "1rem 1.4rem"}}>
             <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"} spacing={1}>
                 <Typography variant={"subtitle1"}>{label}</Typography>
                 <Box sx={{display: "flex", gap: "0.8rem", alignItems: "center", marginLeft: "100%"}}>
@@ -64,6 +55,6 @@ export default function SourceConnectionCard({label, connectionStatus, onClick}:
                     <Button onClick={onClick} variant={"text"} disabled={isLoading} size={"small"}>Test</Button>
                 </Box>
             </Stack>
-        </Paper>
+        </DashboardPaperCard>
     )
 }
