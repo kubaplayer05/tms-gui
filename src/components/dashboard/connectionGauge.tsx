@@ -2,8 +2,8 @@ import GaugeComponent from "react-gauge-component";
 import Typography from "@mui/material/Typography";
 import {Stack} from "@mui/material";
 import {abbreviateNumber} from "../../lib/converters.ts";
-import Paper from "@mui/material/Paper";
 import {useTheme} from "@mui/material/styles";
+import DashboardPaperCard from "../ui/dashboardPaperCard.tsx";
 
 interface IConnectionGauge {
     label: string,
@@ -15,7 +15,7 @@ interface IConnectionGauge {
 export default function ConnectionGauge({label, rate, throughput, maxRate}: IConnectionGauge) {
 
     const {palette} = useTheme()
-    const throughputPerSecond = abbreviateNumber(throughput) + "/s"
+    const throughputPerSecond = abbreviateNumber(throughput) + "B/s"
     const arc = {
         subArcs: [
             {
@@ -35,18 +35,17 @@ export default function ConnectionGauge({label, rate, throughput, maxRate}: ICon
             }
         ]
     }
-    const bgColor = palette.background.default
 
     return (
-        <Paper square={false} sx={{padding: "0.6rem 0", bgcolor: bgColor}}>
+        <DashboardPaperCard sx={{padding: "0.6rem 0"}}>
             <Stack alignItems={"center"}>
                 <Typography variant={"subtitle1"}>{label}</Typography>
                 <GaugeComponent value={rate} maxValue={maxRate} arc={arc} labels={{
-                    valueLabel: {formatTextValue: abbreviateNumber,}
+                    valueLabel: {formatTextValue: (value) => abbreviateNumber(value)}
                 }}/>
                 <Typography>Throughput: {throughputPerSecond}</Typography>
             </Stack>
-        </Paper>
+        </DashboardPaperCard>
 
     )
 }

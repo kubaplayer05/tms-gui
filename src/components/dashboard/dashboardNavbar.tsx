@@ -11,7 +11,7 @@ export default function DashboardNavbar({refreshTime, onRefreshTimeChange, fetch
 
     return (
         <Box sx={{padding: "0.6rem 0rem", width: "100%", display: "flex", alignItems: "center", gap: "1rem",}}>
-            <FormControl sx={{m: 1, ml: 0 ,minWidth: 120}} size="small" variant="filled">
+            <FormControl sx={{m: 1, ml: 0 ,minWidth: 140}} size="small" variant="filled">
                 <InputLabel id="refresh">Refresh</InputLabel>
                 <Select value={refreshTime} autoWidth={true} labelId="refresh" label={"refresh"}
                         onChange={onRefreshTimeChange}>
