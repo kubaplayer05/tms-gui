@@ -44,7 +44,7 @@ function getStatusObject(status: ConnectionStatus): { color: DominatingColor, te
 
 export default function SourceConnectionCard({label, connectionStatus, onBtnClick}: IConnectionCard) {
 
-    const {palette, } = useTheme()
+    const {palette,} = useTheme()
     const [searchParams, setSearchParams] = useSearchParams()
 
     const {text, color,} = getStatusObject(connectionStatus)
@@ -64,8 +64,9 @@ export default function SourceConnectionCard({label, connectionStatus, onBtnClic
     }
 
     return (
-        <DashboardPaperCard sx={{padding: "1rem 1.4rem", cursor: "pointer", bgcolor: activeColor}}>
-            <Stack onClick={clickHandler} direction={"row"} alignItems={"center"} justifyContent={"space-between"}
+        <DashboardPaperCard onClick={clickHandler}
+                            sx={{padding: "1rem 1.4rem", cursor: "pointer", bgcolor: activeColor}}>
+            <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"}
                    spacing={1}>
                 <Typography variant={"subtitle1"}>{label}</Typography>
                 <Box sx={{display: "flex", gap: "0.8rem", alignItems: "center", marginLeft: "100%"}}>

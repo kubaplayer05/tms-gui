@@ -76,7 +76,7 @@ export default function DashboardPage() {
     const [sources, setSources] = useState<ISource[]>(baseSources)
 
     const [searchParams, setSearchParams] = useSearchParams()
-    const defaultSelectedSource = "Queue"
+    const defaultSelectedSource = baseSources[0].label
 
     if (!searchParams.get("source")) {
         setSearchParams(prev => {
