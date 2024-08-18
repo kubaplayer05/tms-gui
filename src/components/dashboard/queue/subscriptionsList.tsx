@@ -1,5 +1,5 @@
 import {Collapse, Divider, ListSubheader} from "@mui/material";
-import {ISubscription} from "../../types/api/queue";
+import {ISubscription} from "../../../types/api/queue";
 import List from "@mui/material/List";
 import ListItemText from "@mui/material/ListItemText";
 import {useTheme} from "@mui/material/styles";
@@ -7,7 +7,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import {useState} from "react";
 import {ExpandLess, ExpandMore} from "@mui/icons-material";
-import DashboardPaperCard from "../ui/dashboardPaperCard.tsx";
+import DashboardPaperCard from "../../ui/dashboardPaperCard.tsx";
 
 interface ISubscriptionsList {
     subscriptions: {
@@ -78,8 +78,7 @@ export default function SubscriptionsList({subscriptions}: ISubscriptionsList) {
     return (
         <DashboardPaperCard sx={{
             width: "100%",
-            height: "100%",
-            maxHeight: "355px",
+            flex: "1 0 0",
             padding: "1rem 2rem",
             overflow: "scroll"
         }}>
