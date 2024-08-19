@@ -1,28 +1,22 @@
-import {ReactNode} from "react";
-import {CircularProgress, Paper} from "@mui/material";
+import {CircularProgress, Stack} from "@mui/material";
 import Typography from "@mui/material/Typography";
 
 interface IStatusWrapper {
     status: "error" | "success" | "pending",
-    children: ReactNode
 }
 
-export default function StatusWrapper({status, children}: IStatusWrapper) {
+export default function StatusWrapper({status}: IStatusWrapper) {
 
     if (status === "pending") {
         return (
-            <Paper sx={{width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}
-                   square={false}>
+            <Stack justifyContent="center" alignItems="center" sx={{width: "100%", height: "100%",}}>
                 <CircularProgress/>
-            </Paper>
+            </Stack>
         )
     }
 
-    if (status === "error") {
-        return <Paper sx={{width: "100%", height: "100%"}} square={false}>
-            <Typography variant={"h2"}>Could not get data.</Typography>
-        </Paper>
-    }
+    return <Stack justifyContent="center" alignItems="center" sx={{width: "100%", height: "100%"}}>
+        <Typography variant={"h2"}>Could not get data.</Typography>
+    </Stack>
 
-    return children
 }

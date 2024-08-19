@@ -7,6 +7,7 @@ export function abbreviateNumber(value: number | string) {
     if (newValue >= 1000) {
         const suffixes = ["", "k", "m", "b", "t"];
         const suffixNum = Math.floor(("" + newValue).length / 3);
+
         let shortValue: number | string = 0
         for (let precision = 3; precision >= 1; precision--) {
             shortValue = parseFloat((suffixNum !== 0 ? (newValue / Math.pow(1000, suffixNum)) : newValue).toPrecision(precision));
@@ -15,9 +16,14 @@ export function abbreviateNumber(value: number | string) {
                 break;
             }
         }
+
         if (shortValue % 1 !== 0) shortValue = shortValue.toFixed(2);
-        newValue = shortValue + suffixes[suffixNum];
-        return newValue
+        newValue = shortValue.toString() + suffixes[suffixNum];
+
+        // TODO: find a real solution, why output contains undefined
+
+        return newValue.replace("undefined", "")
     }
-    return round(newValue, 3).toString();
+
+    return round(newValue, 3).toString().replace("undefined", "");
 }

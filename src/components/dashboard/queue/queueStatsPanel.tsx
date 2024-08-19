@@ -1,8 +1,6 @@
-import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import ConnectionGauge from "../connectionGauge.tsx";
-import {SelectChangeEvent} from "@mui/material";
-import Typography from "@mui/material/Typography";
+import {Button, Collapse, SelectChangeEvent, Stack} from "@mui/material";
 import BacklogCard from "./backlogCard.tsx";
 import DashboardNavbar from "../dashboardNavbar.tsx";
 import Divider from "@mui/material/Divider";
@@ -13,11 +11,18 @@ import {getQueueStats} from "../../../lib/api/queue/getQueueStats.ts";
 import useApiAuthContext from "../../../hooks/useApiAuthContext.ts";
 import useRefreshTime from "../../../hooks/useRefreshTime.ts";
 import StatusWrapper from "../statusWrapper.tsx";
+import {useState} from "react";
+import {FaChevronDown, FaChevronUp} from "react-icons/fa6";
 
 export default function QueueStatsPanel() {
 
     const {apiPrefix, accessToken} = useApiAuthContext()
     const {getRefreshTime, setRefreshTime} = useRefreshTime()
+    const [show, setShow] = useState(false)
+
+    const clickHandler = () => {
+        setShow(prev => !prev)
+    }
 
     const maxRate = 10_000
     const refreshData = {
@@ -37,35 +42,47 @@ export default function QueueStatsPanel() {
         }, refetchInterval: refreshData.time
     })
 
-    if (!data) {
-        return <Paper sx={{width: "100%", height: "100%"}} square={false}>
-            <Typography variant={"h2"}>Could not get data.</Typography>
-        </Paper>
+    if (status !== "success" || !data) {
+        return <StatusWrapper status={status}/>
     }
 
     const statsData = data?.data
 
     return (
-        <StatusWrapper status={status}>
+        <>
             <Box>
                 <DashboardNavbar refreshTime={refreshData.time} onRefreshTimeChange={refreshData.onChange}
                                  fetchStatus={fetchStatus}/>
                 <Divider/>
             </Box>
             <Grid container spacing={2}>
-                <Grid item xs={3}>
+                <Grid item xs={12} md={4}>
                     <ConnectionGauge rate={statsData.msgRateIn} maxRate={maxRate} label={"Msg Rate In"}
                                      throughput={statsData.msgThroughputIn}/>
                 </Grid>
-                <Grid item xs={6}>
-                    <BacklogCard subscriptions={statsData.subscriptions}/>
+                <Grid item xs={12} md={4}>
+                    <Stack sx={{height: "100%"}}>
+                        <BacklogCard subscriptions={statsData.subscriptions}/>
+                        <Button color={"primary"} variant={"contained"} onClick={clickHandler}>
+                            {show ? <FaChevronUp/> : <FaChevronDown/>}
+                        </Button>
+                    </Stack>
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={12} md={4}>
                     <ConnectionGauge rate={statsData.msgRateOut} maxRate={maxRate} label={"Msg Rate Out"}
                                      throughput={statsData.msgThroughputOut}/>
                 </Grid>
             </Grid>
-            <SubscriptionsList subscriptions={statsData.subscriptions}/>
-        </StatusWrapper>
+            <Box sx={{
+                width: "100%",
+                minHeight: "300px",
+                flex: "1 0 0",
+                overflow: "scroll"
+            }}>
+                <Collapse in={show}>
+                    <SubscriptionsList subscriptions={statsData.subscriptions}/>
+                </Collapse>
+            </Box>
+        </>
     )
 }

@@ -1,4 +1,4 @@
-import {CircularProgress, Paper, SelectChangeEvent} from "@mui/material";
+import {SelectChangeEvent} from "@mui/material";
 import DashboardNavbar from "../dashboardNavbar.tsx";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
@@ -31,22 +31,18 @@ export default function ElasticsearchStatsPanel() {
         }, refetchInterval: refreshData.time
     })
 
-    if (!data) {
-        return <Paper
-            sx={{width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}
-            square={false}>
-            <CircularProgress/>
-        </Paper>
+    if (status !== "success" || !data) {
+        return <StatusWrapper status={status}/>
     }
 
     return (
-        <StatusWrapper status={status}>
+        <>
             <Box>
                 <DashboardNavbar refreshTime={refreshData.time} onRefreshTimeChange={refreshData.onChange}
                                  fetchStatus={fetchStatus}/>
                 <Divider/>
             </Box>
             <ElasticsearchClusterList data={data.data}/>
-        </StatusWrapper>
+        </>
     )
 }

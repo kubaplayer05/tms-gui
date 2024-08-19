@@ -42,18 +42,6 @@ export default function App() {
                     ]
                 },
                 {
-                    path: "/dashboard",
-                    element: <DashboardPage/>,
-                    children: [
-                        {
-                            path: "/dashboard/queue",
-                        },
-                        {
-                            path: "/dashboard/elasticsearch"
-                        }
-                    ]
-                },
-                {
                     path: "/tenants",
                     element: <TenantsPage/>
                 },

@@ -71,12 +71,14 @@ export default function DashboardPage() {
         <Box sx={{m: 0, p: 2, width: "100%", height: "100%", display: "flex", gap: "2rem"}}>
             <SourcesPanel sources={sources}/>
             <Paper sx={{
+                minWidth: "500px",
                 width: "100%",
-                height: "100%",
-                padding: "0 2rem 1rem 2rem",
                 display: "flex",
                 flexDirection: "column",
-                gap: "1rem"
+                flex: "1 0 0",
+                overflow: "scroll",
+                padding: "0 2rem 1rem 2rem",
+                gap: "1rem",
             }}>
                 <Outlet/>
             </Paper>

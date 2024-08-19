@@ -3,13 +3,12 @@ import useRefreshTime from "../../../hooks/useRefreshTime.ts";
 import {SelectChangeEvent} from "@mui/material";
 import {useQuery} from "@tanstack/react-query";
 import {getRedisInfo} from "../../../lib/api/connection/getRedisInfo.ts";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
 import StatusWrapper from "../statusWrapper.tsx";
 import DashboardNavbar from "../dashboardNavbar.tsx";
 import Divider from "@mui/material/Divider";
 import Box from "@mui/material/Box";
 import DashboardList from "../dashboardList.tsx";
+import {redisMemoryMetrics} from "../../../lib/configs/redisMemoryMetrics.ts";
 
 export default function RedisStatsPanel() {
 
@@ -33,14 +32,12 @@ export default function RedisStatsPanel() {
         }, refetchInterval: refreshData.time
     })
 
-    if (!data) {
-        return <Paper sx={{width: "100%", height: "100%"}} square={false}>
-            <Typography variant={"h2"}>Could not get data.</Typography>
-        </Paper>
+    if (status !== "success" || !data) {
+        return <StatusWrapper status={status}/>
     }
 
     return (
-        <StatusWrapper status={status}>
+        <>
             <Box>
                 <DashboardNavbar refreshTime={refreshData.time} onRefreshTimeChange={refreshData.onChange}
                                  fetchStatus={fetchStatus}/>
@@ -51,7 +48,7 @@ export default function RedisStatsPanel() {
                 flex: "1 0 0",
                 padding: "1rem 2rem",
                 overflow: "scroll"
-            }} data={data.data} title="Redis info"/>
-        </StatusWrapper>
+            }} data={data.data} propertiesDescription={redisMemoryMetrics} title="Redis info"/>
+        </>
     )
 }
