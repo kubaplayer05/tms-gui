@@ -2,7 +2,7 @@ import {fetchWithToken} from "../../fetchWithToken.ts";
 import {AxiosResponse} from "axios";
 import {IDeleteFnParams, IValidationError} from "../../../types/api/api";
 
-export function deleteTenant({
+export function deleteLicense({
                                  prefixUrl,
                                  accessToken,
                                  id
